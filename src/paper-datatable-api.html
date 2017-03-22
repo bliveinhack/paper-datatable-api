@@ -1,4 +1,4 @@
-<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../polymer/polymer-element.html">
 
 <link rel="import" href="paper-datatable-api-shared-styles.html">
 <link rel="import" href="paper-datatable-api-th-content.html">
@@ -79,49 +79,55 @@ Custom property                                   | Description                 
     <style include="paper-datatable-api-shared-styles"></style>
     <style include="iron-flex iron-flex-alignment"></style>
 
-    <template is="dom-if" if="[[frozenHeader]]" restamp>
-      <div id="headerWrapper">
-        <table id="frozenHeaderTable">
-          <thead class$="[[_generateClass(frozenHeader, filters)]]">
-            <tr>
-              <template is="dom-repeat" items="[[_columns]]" as="column" index-as="index">
-                <template is="dom-if" if="[[selectable]]" restamp>
-                  <template is="dom-if" if="[[equals(index, checkboxColumnPosition)]]" restamp>
-                    <th class="selectable">
-                      <div>
-                        <template is="dom-if" if="[[allowTheSelectionOfAllTheElements]]" restamp>
-                          <paper-checkbox on-change="_selectAllCheckbox"></paper-checkbox>
+    <dom-if if="[[frozenHeader]]" restamp>
+      <template>
+        <div id="headerWrapper">
+          <table id="frozenHeaderTable">
+            <thead class$="[[_generateClass(frozenHeader, filters)]]">
+              <tr>
+                <template is="dom-repeat" items="[[_columns]]" as="column" index-as="index">
+                  <dom-if if="[[selectable]]" restamp>
+                    <template>
+                      <dom-if if="[[equals(index, checkboxColumnPosition)]]" restamp>
+                        <template>
+                          <th class="selectable">
+                            <div>
+                              <template is="dom-if" if="[[allowTheSelectionOfAllTheElements]]" restamp>
+                                <paper-checkbox on-change="_selectAllCheckbox"></paper-checkbox>
+                              </template>
+                            </div>
+                          </th>
                         </template>
-                      </div>
-                    </th>
-                  </template>
+                      </dom-if>
+                    </template>
+                  </dom-if>
+                  <th
+                    class$="[[_generateClass(frozenHeader, column.filter)]] pgTh [[_addCustomTdClass(column.tdCustomStyle)]]"
+                    data-column="[[column]]"
+                    property$="[[column.property]]"
+                    style$="display: [[_getThDisplayStyle(column.hidden)]];">
+
+                    <paper-datatable-api-th-content
+                      column="[[column]]"
+                      locale-date-picker="[[localeDatePicker]]"
+                      position-sort-icon="[[positionSortIcon]]"
+                      sort-direction$="[[column.sortDirection]]"
+                      on-input-change-th-content="_handleInputChange"
+                      on-filter-th-content="_handleFilter"
+                      on-date-input-change-th-content="_handleVaadinDatePickerLight"
+                      sorted$="[[column.sorted]]"
+                      sortable$="[[column.sortable]]"
+                      on-sort-th-content="_handleSort">
+                    </paper-datatable-api-th-content>
+
+                  </th>
                 </template>
-                <th
-                  class$="[[_generateClass(frozenHeader, column.filter)]] pgTh [[_addCustomTdClass(column.tdCustomStyle)]]"
-                  data-column="[[column]]"
-                  property$="[[column.property]]"
-                  style$="display: [[_getThDisplayStyle(column.hidden)]];">
-
-                  <paper-datatable-api-th-content
-                    column="[[column]]"
-                    locale-date-picker="[[localeDatePicker]]"
-                    position-sort-icon="[[positionSortIcon]]"
-                    sort-direction$="[[column.sortDirection]]"
-                    on-input-change-th-content="_handleInputChange"
-                    on-filter-th-content="_handleFilter"
-                    on-date-input-change-th-content="_handleVaadinDatePickerLight"
-                    sorted$="[[column.sorted]]"
-                    sortable$="[[column.sortable]]"
-                    on-sort-th-content="_handleSort">
-                  </paper-datatable-api-th-content>
-
-                </th>
-              </template>
-            </tr>
-          </thead>
-        </table>
-      </div>
-    </template>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </template>
+    </dom-if>
 
     <div id="wrapper" on-scroll="_handleWrapperScroll" class$="[[_generateClass(frozenHeader)]]">
       <table>

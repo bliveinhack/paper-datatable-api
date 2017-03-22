@@ -19,8 +19,8 @@
       }
 
       :host > div {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
+        @apply --layout-horizontal;
+        @apply --layout-center;
       }
 
       paper-input {
@@ -41,7 +41,7 @@
 
       paper-icon-button {
         --paper-icon-button-hover: {
-          @apply(--paper-datatable-api-header-sorted);
+          @apply --paper-datatable-api-header-sorted;
         };
         min-width: 36px;
         min-height: 36px;
@@ -53,7 +53,7 @@
       }
 
       paper-icon-button[sortable].filter.active {
-        @apply(--paper-datatable-api-header-sorted);
+        @apply --paper-datatable-api-header-sorted;
       }
 
       paper-icon-button.sort {
@@ -61,7 +61,7 @@
       }
 
       paper-icon-button[sorted].sort {
-        @apply(--paper-datatable-api-header-sorted);
+        @apply --paper-datatable-api-header-sorted;
       }
 
       paper-icon-button.sort:not([sorted]):not([sort-direction='desc']) {

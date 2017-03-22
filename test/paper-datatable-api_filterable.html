@@ -49,14 +49,16 @@
           paperDatatableApi.data = data;
 
           flush(function() {
-            let filterButton = paperDatatableApi.querySelector('thead th div paper-icon-button[icon="search"]');
+            let thContent = Polymer.dom(paperDatatableApi.root).querySelector('paper-datatable-api-th-content');
+            let filterButton = Polymer.dom(thContent.root).querySelector('div paper-icon-button[icon="search"]');
             filterButton.click();
 
             flush(function() {
-              var input = paperDatatableApi.querySelector('thead tr th paper-input');
+              let thContent = Polymer.dom(paperDatatableApi.root).querySelector('paper-datatable-api-th-content');
+              var input = Polymer.dom(thContent.root).querySelector('paper-input');
               assert.isTrue(input.focused);
+              done();
             });
-            done();
           });
         });
 
@@ -65,15 +67,16 @@
           paperDatatableApi.data = data;
 
           flush(function() {
-            let filterDiv = paperDatatableApi.querySelector('thead th paper-datatable-api-th-content div div');
-            console.log(filterDiv);
+            let thContent = Polymer.dom(paperDatatableApi.root).querySelector('paper-datatable-api-th-content');
+            let filterDiv = Polymer.dom(thContent.root).querySelector('div div');
             filterDiv.click();
 
             flush(function() {
-              var input = paperDatatableApi.querySelector('thead tr th paper-input');
+              let thContent = Polymer.dom(paperDatatableApi.root).querySelector('paper-datatable-api-th-content');
+              var input = Polymer.dom(thContent.root).querySelector('paper-input');
               assert.isTrue(input.focused);
+              done();
             });
-            done();
           });
         });
 
@@ -82,16 +85,16 @@
           paperDatatableApi.data = data;
 
           flush(function() {
-            let secondDiv = paperDatatableApi.querySelectorAll('thead tr th')[1];
-            console.log(secondDiv);
-            secondDiv.querySelector('div paper-datatable-api-th-content div').click();
+            let thsContent = Polymer.dom(paperDatatableApi.root).querySelectorAll('paper-datatable-api-th-content');
+            let secondDiv = Polymer.dom(thsContent[1].root).querySelector('div div');
+            secondDiv.click();
 
             flush(function() {
-              let secondDivForInput = paperDatatableApi.querySelectorAll('thead tr th')[1];
-              var input = secondDivForInput.querySelector('paper-input');
-              assert.isNull(input);
+              let thsContent = Polymer.dom(paperDatatableApi.root).querySelectorAll('paper-datatable-api-th-content');
+              let secondDivForInput = Polymer.dom(thsContent[1].root).querySelector('paper-input');
+              assert.isNull(secondDivForInput);
+              done();
             });
-            done();
           });
         });
 

@@ -1,11 +1,9 @@
-class DtPaperDatatableApi {
+class DtPaperDatatableApi extends Polymer.mixinBehaviors([Polymer.AppLocalizeBehavior, Polymer.IronResizableBehavior], Polymer.Element) {
 
-  beforeRegister() {
-    this.is = 'paper-datatable-api';
-    this.properties = {
-      /**
-       * The columns element.
-       */
+  static get is() {return 'paper-datatable-api'}
+
+  static get properties() {
+    return {
       _columns: {
         type: Array,
         value: () => [],
@@ -180,17 +178,12 @@ class DtPaperDatatableApi {
         notify: true,
       },
     };
-
-    this.listeners = {
-      'iron-resize': '_resizeHeader',
-    };
   }
 
-  get behaviors() {
-    return [
-      Polymer.AppLocalizeBehavior,
-      Polymer.IronResizableBehavior,
-    ];
+  static get listeners() {
+    return {
+      'iron-resize': '_resizeHeader',
+    };
   }
 
   /** Frozen Mode **/
@@ -244,7 +237,7 @@ class DtPaperDatatableApi {
   }
 
   _getTheadWidths() {
-    const frozenHeaderTable = this.$$('#frozenHeaderTable');
+    const frozenHeaderTable = this.shadowRoot.querySelector('#frozenHeaderTable');
     if (frozenHeaderTable) {
       const allTheadTrTh = frozenHeaderTable.querySelectorAll('thead tr th');
       return Object.keys(allTheadTrTh).map(
@@ -255,7 +248,7 @@ class DtPaperDatatableApi {
   }
 
   _getTbodyWidths() {
-    const table = this.$$('table:not(#frozenHeaderTable)');
+    const table = this.shadowRoot.querySelector('table:not(#frozenHeaderTable)');
     const tbody = table.querySelector('tbody tr');
 
     if (tbody) {
@@ -266,9 +259,9 @@ class DtPaperDatatableApi {
   }
 
   _resizeTd(size, columnIndex, type) {
-    let allTheadTrTh = this.$$('tbody tr').querySelectorAll('td');
+    let allTheadTrTh = this.shadowRoot.querySelector('tbody tr').querySelectorAll('td');
     if (type === 'header') {
-      allTheadTrTh = this.$$('#frozenHeaderTable thead tr').querySelectorAll('th');
+      allTheadTrTh = this.shadowRoot.querySelector('#frozenHeaderTable thead tr').querySelectorAll('th');
     }
 
     if (allTheadTrTh.length > 0) {
@@ -289,7 +282,7 @@ class DtPaperDatatableApi {
 
   _handleWrapperScroll(event) {
     if (this.frozenHeader) {
-      this.$$('#headerWrapper').scrollLeft = event.target.scrollLeft;
+      this.shadowRoot.querySelector('#headerWrapper').scrollLeft = event.target.scrollLeft;
     }
   }
 
@@ -384,8 +377,8 @@ class DtPaperDatatableApi {
   }
 
   _removeRows() {
-    const pgTrs = Polymer.dom(this.root).querySelectorAll('.paper-datatable-api-tr');
-    pgTrs.forEach(pgTr => Polymer.dom(this.$$('tbody')).removeChild(pgTr));
+    const pgTrs = this.shadowRoot.querySelectorAll('.paper-datatable-api-tr');
+    pgTrs.forEach(pgTr => Polymer.dom(this.shadowRoot.querySelector('tbody')).removeChild(pgTr));
   }
 
   _fillRows(data) {
@@ -398,7 +391,7 @@ class DtPaperDatatableApi {
         this.listen(trLocal, 'mouseover', 'onOverTr');
         this.listen(trLocal, 'mouseout', 'onOutTr');
 
-        Polymer.dom(this.$$('tbody')).appendChild(trLocal);
+        Polymer.dom(this.shadowRoot.querySelector('tbody')).appendChild(trLocal);
       });
     }
   }
@@ -430,7 +423,7 @@ class DtPaperDatatableApi {
   }
 
   _fillColumns() {
-    const pgTrs = Polymer.dom(this.root).querySelectorAll('.paper-datatable-api-tr');
+    const pgTrs = this.shadowRoot.querySelectorAll('.paper-datatable-api-tr');
 
     pgTrs.forEach((pgTr, i) => {
       const rowData = pgTr.rowData;
@@ -452,8 +445,8 @@ class DtPaperDatatableApi {
             }
           }
 
-          Polymer.dom(tdSelectable).appendChild(paperCheckbox);
-          Polymer.dom(pgTr).appendChild(tdSelectable);
+          tdSelectable.appendChild(paperCheckbox);
+          pgTr.appendChild(tdSelectable);
           Polymer.dom.flush();
         }
 
@@ -472,7 +465,7 @@ class DtPaperDatatableApi {
         this.listen(tdLocal, 'mouseover', 'onOverTd');
         this.listen(tdLocal, 'mouseout', 'onOutTd');
 
-        const template = paperDatatableApiColumn.fillTemplate(
+        const instance = paperDatatableApiColumn.fillTemplate(
           valueFromRowData,
           otherPropertiesValue
         );
@@ -481,15 +474,15 @@ class DtPaperDatatableApi {
           tdLocal.style.display = 'none';
         }
 
-        Polymer.dom(tdLocal).appendChild(template.root);
-        Polymer.dom(pgTr).appendChild(tdLocal);
+        tdLocal.appendChild(instance.root);
+        pgTr.appendChild(tdLocal);
       });
     });
   }
 
   _selectAllCheckbox(event) {
     const localTarget = Polymer.dom(event).localTarget;
-    const allPaperCheckbox = Polymer.dom(this.root)
+    const allPaperCheckbox = this.shadowRoot
       .querySelectorAll('tbody tr td paper-checkbox');
     allPaperCheckbox.forEach((paperCheckboxParams) => {
       const paperCheckbox = paperCheckboxParams;
@@ -512,7 +505,7 @@ class DtPaperDatatableApi {
    * @param {String} value The value of the row following the selectableDatakey.
    */
   selectRow(value) {
-    const table = this.$$('table:not(#frozenHeaderTable)');
+    const table = this.shadowRoot.querySelector('table:not(#frozenHeaderTable)');
     const allTr = table.querySelectorAll('tbody tr');
     allTr.forEach((tr) => {
       const selectedRow = this._findSelectableElement(tr.rowData);
@@ -638,7 +631,7 @@ class DtPaperDatatableApi {
       const isHidden = column.hidden;
       const indexColumn = this.selectable ? index + 2 : index + 1;
       const cssQuery = `tr th:nth-of-type(${indexColumn}), tr td:nth-of-type(${indexColumn})`;
-      Polymer.dom(this.root).querySelectorAll(cssQuery).forEach((tdThParams) => {
+      this.shadowRoot.querySelectorAll(cssQuery).forEach((tdThParams) => {
         const tdTh = tdThParams;
         tdTh.style.display = isHidden ? 'table-cell' : 'none';
       });
@@ -662,7 +655,7 @@ class DtPaperDatatableApi {
   }
 
   _newSizeIsSelected() {
-    const newSize = this.$$('paper-listbox').selected;
+    const newSize = this.shadowRoot.querySelector('paper-listbox').selected;
     if (newSize) {
       if (this.oldPage !== null && this.oldPage !== undefined) {
         this.page = 0;
@@ -710,7 +703,7 @@ class DtPaperDatatableApi {
       let th = targetTh;
 
       if (!th) {
-        th = Polymer.dom(this.root).querySelector(`thead th[property="${column.property}"]`);
+        th = this.shadowRoot.querySelector(`thead th[property="${column.property}"]`);
       }
 
       if (th) {
@@ -740,7 +733,7 @@ class DtPaperDatatableApi {
     if (column.sortable) {
       let th = targetTh;
       const queryThContent = 'thead th paper-datatable-api-th-content[sortable][sorted]';
-      Polymer.dom(this.root).querySelectorAll(queryThContent)
+      this.shadowRoot.querySelectorAll(queryThContent)
         .forEach((otherThContent) => {
           const thSorted = otherThContent.parentNode;
 
@@ -753,7 +746,7 @@ class DtPaperDatatableApi {
         });
 
       if (!th) {
-        th = Polymer.dom(this.root).querySelector(`thead th[property="${column.property}"]`);
+        th = this.shadowRoot.querySelector(`thead th[property="${column.property}"]`);
       }
 
       if (th) {
@@ -877,7 +870,7 @@ class DtPaperDatatableApi {
 
   _footerPositionChange(position) {
     this.async(() => {
-      const footerDiv = Polymer.dom(this.root).querySelector('tfoot > tr > td > div > div');
+      const footerDiv = this.shadowRoot.querySelector('tfoot > tr > td > div > div');
 
       if (footerDiv) {
         if (position === 'right') {
@@ -897,13 +890,13 @@ class DtPaperDatatableApi {
   }
 
   _handleDragAndDrop() {
-    const allTh = Polymer.dom(this.root).querySelectorAll('thead th');
+    const allTh = this.shadowRoot.querySelectorAll('thead th');
     allTh.forEach((th) => {
       th.addEventListener('dragover', this._dragOverHandle.bind(this), false);
       th.addEventListener('dragenter', this._dragEnterHandle.bind(this), false);
       th.addEventListener('drop', this._dropHandle.bind(this), false);
     });
-    const allThDiv = Polymer.dom(this.root).querySelectorAll('thead th paper-datatable-api-th-content');
+    const allThDiv = this.shadowRoot.querySelectorAll('thead th paper-datatable-api-th-content');
     allThDiv.forEach((div) => {
       div.addEventListener('dragstart', this._dragStartHandle.bind(this), false);
       div.addEventListener('dragend', this._dragEndHandle.bind(this), false);
@@ -958,12 +951,12 @@ class DtPaperDatatableApi {
     const toProperty = to.getAttribute('property');
     if (fromProperty !== toProperty) {
       this.async(() => {
-        const allTh = Polymer.dom(this.root).querySelectorAll('thead th');
+        const allTh = this.shadowRoot.querySelectorAll('thead th');
         const toIndex = allTh.findIndex(th => th.getAttribute('property') === toProperty);
         const fromIndex = allTh.findIndex(th => th.getAttribute('property') === fromProperty);
         this._insertElement(allTh, toIndex, fromIndex);
 
-        const allTr = Polymer.dom(this.root).querySelectorAll('tbody tr');
+        const allTr = this.shadowRoot.querySelectorAll('tbody tr');
         allTr.forEach((tr) => {
           const allTd = Polymer.dom(tr).querySelectorAll('td');
           this._insertElement(allTd, toIndex, fromIndex);
@@ -984,8 +977,10 @@ class DtPaperDatatableApi {
 
   _generatePropertiesOrder() {
     Polymer.dom.flush();
-    const allTh = Polymer.dom(this.root).querySelectorAll('thead th');
-    const propertiesOrder = allTh.filter(th => th.getAttribute('property') !== null)
+    const allTh = this.shadowRoot.querySelectorAll('thead th');
+
+    const propertiesOrder = Array.prototype.filter
+      .call(allTh, th => th.getAttribute('property') !== null)
       .map(th => th.getAttribute('property'));
 
     this.propertiesOrder = propertiesOrder;
@@ -1052,11 +1047,11 @@ class DtPaperDatatableApi {
    */
   scrollToTop() {
     if (this.frozenHeader) {
-      Polymer.dom(this.root).querySelector('#wrapper').scrollTop = 0;
+      this.shadowRoot.querySelector('#wrapper').scrollTop = 0;
     } else {
-      Polymer.dom(this.root).querySelector('tbody').scrollTop = 0;
+      this.shadowRoot.querySelector('tbody').scrollTop = 0;
     }
   }
 }
 
-Polymer(DtPaperDatatableApi);
+customElements.define(DtPaperDatatableApi.is, DtPaperDatatableApi);
