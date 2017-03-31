@@ -50,6 +50,10 @@ class DtPaperDatatableApiThContent extends Polymer.mixinBehaviors(
 
   _handleFilter() {
     if (this.column.filter) {
+      if (this.column.activeFilter) {
+        this.$$('paper-input').value = '';
+        this.previousValue = null;
+      }
       this.fire('filter-th-content', { column: this.column });
     }
   }
